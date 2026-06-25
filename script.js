@@ -60,11 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 mediaRecorder.start();
                 touchButton.disabled = true; 
                 
+                // CAMBIO AQUÍ: Ahora el temporizador espera 30000 milisegundos (30 segundos)
                 setTimeout(() => {
                     if (mediaRecorder && mediaRecorder.state === 'recording') {
                         mediaRecorder.stop();
                     }
-                }, 10000);
+                }, 30000);
             })
             .catch((err) => {
                 console.error('Error de acceso a hardware:', err);
