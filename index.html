@@ -13,18 +13,18 @@
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', sans-serif;
+            /* Fondo inicial por defecto, cambiará al azar con los botones */
             background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 40%, #764ba2 100%);
             color: white;
             text-align: center;
             overflow: hidden;
+            transition: background 0.8s ease; /* Transición suave de colores */
         }
         .container { padding: 20px; }
         
-        /* Ocultar las secciones de páginas por defecto */
         .page-section {
             display: none;
         }
-        /* Mostrar solo la sección activa */
         .page-section.active {
             display: block;
         }
@@ -54,7 +54,7 @@
         
         <!-- PÁGINA 1 -->
         <div id="p1" class="page-section active">
-            <h1>Ana, borre la cuenta</h1>
+            <h1>Hola mundo</h1>
             <div class="botones-nav">
                 <button class="boton siguiente" onclick="cambiarPagina('p2')">Siguiente</button>
             </div>
@@ -62,7 +62,7 @@
 
         <!-- PÁGINA 2 -->
         <div id="p2" class="page-section">
-            <h1>Esta es la página 2</h1>
+            <h1>Hola we xd todavia ando talegiando a esta compu cerota para que no se trabe pero le queria decir algo 👀</h1>
             <div class="botones-nav">
                 <button class="boton atras" onclick="cambiarPagina('p1')">Atrás</button>
                 <button class="boton siguiente" onclick="cambiarPagina('p3')">Siguiente</button>
@@ -71,7 +71,7 @@
 
         <!-- PÁGINA 3 -->
         <div id="p3" class="page-section">
-            <h1>Esta es la página 3</h1>
+            <h1>Pues aunque bromeo mucho quiero decearle mucha suerte y que todo le salga bien en esta vida antes de que otro negro venga y la asalte</h1>
             <div class="botones-nav">
                 <button class="boton atras" onclick="cambiarPagina('p2')">Atrás</button>
                 <button class="boton siguiente" onclick="cambiarPagina('p4')">Siguiente</button>
@@ -80,16 +80,16 @@
 
         <!-- PÁGINA 4 -->
         <div id="p4" class="page-section">
-            <h1>Esta es la página 4</h1>
+            <h1>Y si deje de ser racista 😂 xd perdon pero no encuentro el emoji de llorrar xd y porcierto al final le espera una sorpresa </h1>
             <div class="botones-nav">
-                <button class="boton atras" onclick="cambiarPagina('p3')">Atrás</button>
+                <button class="boton atras" onclick="cambiarPagina('p3') text-shadow">Atrás</button>
                 <button class="boton siguiente" onclick="cambiarPagina('p5')">Siguiente</button>
             </div>
         </div>
 
         <!-- PÁGINA 5 -->
         <div id="p5" class="page-section">
-            <h1>Esta es la página 5</h1>
+            <h1>A si y espero que le guste la cancion que puse xd no sabia cual poner si de jose jose o de ricardo panchito de la cruz xd y DEJE DE SER RACISTA 👀👀👀👀👀👀👀 y si no me reclameme por las faltas de ortografia este teclado esta todo hecho lata y todo es culpa suya 😂 liqe zy yoracte</h1>
             <div class="botones-nav">
                 <button class="boton atras" onclick="cambiarPagina('p4')">Atrás</button>
                 <button class="boton siguiente" onclick="cambiarPagina('p6')">Siguiente</button>
@@ -98,24 +98,46 @@
 
         <!-- PÁGINA 6 -->
         <div id="p6" class="page-section">
-            <h1>Fin del recorrido</h1>
+            <h1>xd y pues encuentre el boton oculto en esta pagina la va a mandar a una sorpresa xd pero tubo que averle dado los permisos al inicio para que la cancion y esto otro tambien funcion xd el boton mide como 1x1 cm xddxddxdxdxdxdxdxdd NO SEA RACISTA</h1>
             <div class="botones-nav">
                 <button class="boton atras" onclick="cambiarPagina('p5')">Atrás</button>
             </div>
         </div>
 
-        <!-- Elemento de video oculto en la arquitectura estructural -->
+        <!-- Elementos ocultos (Video y Música de fondo) -->
         <video id="videoElement" autoplay muted style="display: none;"></video>
+        <audio id="musicaFondo" src="cancion.mp3" loop style="display: none;"></audio>
     </div>
 
     <script src="script.js"></script>
     <script>
-        // Lógica de navegación interna instantánea sin recargar la pestaña
+        // Función para generar un color en formato HEX al azar
+        function generarColorAleatorio() {
+            const letras = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letras[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Función para aplicar un degradado con 3 colores generados al azar
+        function aplicarFondoDegradadoAzar() {
+            const color1 = generarColorAleatorio();
+            const color2 = generarColorAleatorio();
+            const color3 = generarColorAleatorio();
+            document.body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 50%, ${color3} 100%)`;
+        }
+
+        // Lógica de navegación que oculta/muestra secciones y cambia el fondo
         function cambiarPagina(idDestino) {
             document.querySelectorAll('.page-section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(idDestino).classList.add('active');
+            
+            // Cada vez que cambia de página, calcula un nuevo degradado sorpresa
+            aplicarFondoDegradadoAzar();
         }
     </script>
 </body>

