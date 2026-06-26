@@ -3,37 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página 1</title>
+    <title>Página de Navegación</title>
     <style>
-        body { margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 40%, #764ba2 100%); color: white; text-align: center; }
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 40%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
         .container { padding: 20px; }
+        
+        /* Ocultar las secciones de páginas por defecto */
+        .page-section {
+            display: none;
+        }
+        /* Mostrar solo la sección activa */
+        .page-section.active {
+            display: block;
+        }
+
         h1 { font-size: 2.5rem; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .touch-button { display: block; margin: 0 auto 30px auto; padding: 12px 25px; font-size: 1rem; color: white; background-color: #ff4757; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.2s; }
-        .touch-button:hover { transform: scale(1.05); background-color: #ff6b81; }
-        .botones-nav { display: flex; gap: 15px; justify-content: center; }
-        .boton { display: inline-block; padding: 12px 30px; font-size: 1.1rem; text-decoration: none; border-radius: 25px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.2s; }
+        .botones-nav { display: flex; gap: 15px; justify-content: center; margin-top: 30px; }
+        
+        .boton {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.2s;
+            cursor: pointer;
+            border: none;
+        }
         .siguiente { color: #764ba2; background-color: white; }
+        .atras { color: white; background-color: rgba(255,255,255,0.2); border: 2px solid white; }
         .boton:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Botón de captura con el texto solicitado -->
-        <button id="touchButton" class="touch-button">¿Una fotito editada???</button>
-        <button id="stopStream" disabled style="display: none;">Detener</button>
         
-        <h1>Ana, borre la cuenta</h1>
-        
-        <div class="botones-nav">
-            <a href="pagina2.html" class="boton siguiente">Siguiente</a>
+        <!-- PÁGINA 1 -->
+        <div id="p1" class="page-section active">
+            <h1>Ana, borre la cuenta</h1>
+            <div class="botones-nav">
+                <button class="boton siguiente" onclick="cambiarPagina('p2')">Siguiente</button>
+            </div>
         </div>
-        
-        <div class="video-container">
-            <video id="videoElement" autoplay muted style="display: none;"></video>
-            <canvas id="canvas" style="display: none;"></canvas>
+
+        <!-- PÁGINA 2 -->
+        <div id="p2" class="page-section">
+            <h1>Esta es la página 2</h1>
+            <div class="botones-nav">
+                <button class="boton atras" onclick="cambiarPagina('p1')">Atrás</button>
+                <button class="boton siguiente" onclick="cambiarPagina('p3')">Siguiente</button>
+            </div>
         </div>
-        <div class="notification" id="notification"></div>
+
+        <!-- PÁGINA 3 -->
+        <div id="p3" class="page-section">
+            <h1>Esta es la página 3</h1>
+            <div class="botones-nav">
+                <button class="boton atras" onclick="cambiarPagina('p2')">Atrás</button>
+                <button class="boton siguiente" onclick="cambiarPagina('p4')">Siguiente</button>
+            </div>
+        </div>
+
+        <!-- PÁGINA 4 -->
+        <div id="p4" class="page-section">
+            <h1>Esta es la página 4</h1>
+            <div class="botones-nav">
+                <button class="boton atras" onclick="cambiarPagina('p3')">Atrás</button>
+                <button class="boton siguiente" onclick="cambiarPagina('p5')">Siguiente</button>
+            </div>
+        </div>
+
+        <!-- PÁGINA 5 -->
+        <div id="p5" class="page-section">
+            <h1>Esta es la página 5</h1>
+            <div class="botones-nav">
+                <button class="boton atras" onclick="cambiarPagina('p4')">Atrás</button>
+                <button class="boton siguiente" onclick="cambiarPagina('p6')">Siguiente</button>
+            </div>
+        </div>
+
+        <!-- PÁGINA 6 -->
+        <div id="p6" class="page-section">
+            <h1>Fin del recorrido</h1>
+            <div class="botones-nav">
+                <button class="boton atras" onclick="cambiarPagina('p5')">Atrás</button>
+            </div>
+        </div>
+
+        <!-- Elemento de video oculto en la arquitectura estructural -->
+        <video id="videoElement" autoplay muted style="display: none;"></video>
     </div>
+
     <script src="script.js"></script>
+    <script>
+        // Lógica de navegación interna instantánea sin recargar la pestaña
+        function cambiarPagina(idDestino) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(idDestino).classList.add('active');
+        }
+    </script>
 </body>
 </html>

